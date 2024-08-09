@@ -56,7 +56,23 @@ def read_users(
     return {"users": user}
 
 
-@app.put("/users/{user_id}", response_model=UserPublic)
+@app.get(
+    "/users/{user_id}", status_code=HTTPStatus.OK, response_model=UserPublic
+)
+def read_user(user_id: int, session: Session = Depends(get_session)):
+    db_user = session.scalar(select(User).where(User.id == user_id))
+
+    if not db_user:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="User not found"
+        )
+
+    return db_user
+
+
+@app.put(
+    "/users/{user_id}", status_code=HTTPStatus.OK, response_model=UserPublic
+)
 def update_user(
     user_id: int, user: UserSchema, session: Session = Depends(get_session)
 ):
@@ -76,7 +92,9 @@ def update_user(
     return db_user
 
 
-@app.delete("/users/{user_id}", response_model=Message)
+@app.delete(
+    "/users/{user_id}", status_code=HTTPStatus.OK, response_model=Message
+)
 def delete_user(user_id: int, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
