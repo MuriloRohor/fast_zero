@@ -42,7 +42,7 @@ quote-style = "double"
 run = "fastapi dev fast_zero/app.py"
 
 pre_test = "task lint"
-test = "pytest -s -x --cov=fast_zero -vv"
+test = "pytest --cov=fast_zero -vv"
 post_test = "coverage html"
 
 lint = "ruff check . && ruff check . --diff"
