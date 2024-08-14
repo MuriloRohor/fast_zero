@@ -3,13 +3,13 @@ from http import HTTPStatus
 from fast_zero.schemas import UserPublic
 
 
-def test_create_user(client):
+def test_create_user(client, user):
     response = client.post(
         "/users/",
         json={
-            "username": "testeusername",
-            "password": "password",
-            "email": "test@test.com",
+            "username": "teste",
+            "password": "teste",
+            "email": "teste@teste.com",
         },
     )
 
@@ -17,9 +17,9 @@ def test_create_user(client):
 
     # Validar UserPublic
     assert response.json() == {
-        "id": 1,
-        "username": "testeusername",
-        "email": "test@test.com",
+        "id": 2,
+        "username": "teste",
+        "email": "teste@teste.com",
     }
 
 
@@ -27,9 +27,9 @@ def test_create_user_where_username_already_exists(client, user):
     response = client.post(
         "/users/",
         json={
-            "username": "Teste",
+            "username": user.username,
             "password": "teste",
-            "email": "test_outro@test.com",
+            "email": "teste_diferente@email.com",
         },
     )
 
@@ -41,9 +41,9 @@ def test_create_user_where_email_already_exists(client, user):
     response = client.post(
         "/users/",
         json={
-            "username": "Teste_outro",
+            "username": "teste",
             "password": "teste",
-            "email": "teste@test.com",
+            "email": user.email,
         },
     )
 
@@ -61,13 +61,13 @@ def test_read_users(client):
 
 
 def test_read_user(client, user):
-    response = client.get("/users/1")
+    response = client.get(f"/users/{user.id}")
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        "id": 1,
-        "username": "Teste",
-        "email": "teste@test.com",
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
     }
 
 
@@ -133,9 +133,9 @@ def test_delete_user(client, user, token):
     assert response.json() == {"message": "User deleted"}
 
 
-def test_delete_wrong_user(client, user, token):
+def test_delete_wrong_user(client, other_user, token):
     response = client.delete(
-        f"/users/{user.id + 1}",
+        f"/users/{other_user.id}",
         headers={"Authorization": f"Bearer {token}"},
     )
 
