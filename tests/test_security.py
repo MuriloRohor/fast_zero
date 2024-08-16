@@ -12,7 +12,7 @@ def test_jwt():
     token = create_access_token(data)
 
     result = decode(
-        token, settings.SECRETE_KEY, algorithms=[settings.ALGORITHM]
+        token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
     )
 
     assert result["sub"] == data["sub"]

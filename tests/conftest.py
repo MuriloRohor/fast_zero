@@ -31,6 +31,14 @@ class TodoFactory(factory.Factory):
     user_id = 1
 
 
+@pytest.fixture(scope="session")
+def engine():
+    with PostgresContainer("postgres:16", driver="psycopg") as postgres:
+        _engine = create_engine(postgres.get_connection_url())
+        with _engine.begin():
+            yield _engine
+
+
 @pytest.fixture()
 def client(session):
     def get_session_override():
@@ -42,14 +50,6 @@ def client(session):
         yield client
 
     app.dependency_overrides.clear()
-
-
-@pytest.fixture(scope="session")
-def engine():
-    with PostgresContainer("postgres:16", driver="psycopg") as postgres:
-        _engine = create_engine(postgres.get_connection_url())
-        with _engine.begin():
-            yield _engine
 
 
 @pytest.fixture()
@@ -72,7 +72,7 @@ def user(session):
     session.commit()
     session.refresh(user)
 
-    user.clean_password = pwd  # Monkey Patch
+    user.clean_password = "testtest"  # Monkey Patch
 
     return user
 
