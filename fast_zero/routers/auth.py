@@ -21,7 +21,7 @@ T_Session = Annotated[Session, Depends(get_session)]
 OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 
-@router.post("/token/", response_model=Token)
+@router.post("/token", response_model=Token)
 def login_for_access_token(
     session: T_Session,
     form_data: OAuth2Form,
@@ -39,7 +39,7 @@ def login_for_access_token(
     return {"access_token": access_token, "token_type": "Bearer"}
 
 
-@router.post("/refresh_token/", response_model=Token)
+@router.post("/refresh_tokens", response_model=Token)
 def refresh_access_token(
     user: User = Depends(get_current_user),
 ):

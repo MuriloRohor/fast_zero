@@ -41,7 +41,7 @@ def test_login_for_access_token_password_incorrect(client, user):
 def test_token_expired_after_time(client, user):
     with freeze_time("2024-08-13 12:00:00"):
         response = client.post(
-            "auth/token",
+            "/auth/token",
             data={"username": user.email, "password": user.clean_password},
         )
         assert response.status_code == HTTPStatus.OK
@@ -59,7 +59,7 @@ def test_token_expired_after_time(client, user):
 
 def test_refresh_token(client, token):
     response = client.post(
-        "/auth/refresh_token",
+        "/auth/refresh_tokens",
         headers={"Authorization": f"Bearer {token}"},
     )
     data = response.json()
@@ -73,7 +73,7 @@ def test_refresh_token(client, token):
 def test_token_expired_dont_refresh_time(client, user):
     with freeze_time("2024-08-13 12:00:00"):
         response = client.post(
-            "auth/token",
+            "/auth/token",
             data={"username": user.email, "password": user.clean_password},
         )
         assert response.status_code == HTTPStatus.OK
@@ -81,7 +81,7 @@ def test_token_expired_dont_refresh_time(client, user):
 
     with freeze_time("2024-08-13 12:31:00"):
         response = client.post(
-            "/auth/refresh_token",
+            "/auth/refresh_tokens",
             headers={"Authorization": f"Bearer {token}"},
         )
 
